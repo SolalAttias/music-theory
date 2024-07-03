@@ -94,6 +94,9 @@ class Chord:
         if self.is_diminished_triad():
             return self.notes[0].note_value + "°"
 
+    def __repr__(self) -> str:
+        return self.to_notation()
+
     @classmethod
     def from_chord_notation(cls, chord_notation) -> "Chord":
         if chord_notation[-1] == "°":
@@ -144,9 +147,7 @@ class Key:
         try:
             chord_value = self.notes.index(root)
         except ValueError:
-            raise IOError(
-                f"Root note of chord {chord.to_notation()} is not in key {self.key_notation}"
-            )
+            raise IOError(f"Root note of chord {chord} is not in key {self.key_notation}")
         numeral = ROMAN_NUMERALS[chord_value]
 
         if chord.is_major_triad():
@@ -218,4 +219,11 @@ if __name__ == "__main__":
 
     print(f"Here is the roman numeral analysis of your song in the key of {key}")
     for chord in chords:
-        print(f"{chord.to_notation()}: {key.get_numeral_from_chord(chord)}")
+        print(f"{chord}: {key.get_numeral_from_chord(chord)}")
+
+    if any(not key.contains_chord(chord) for chord in chords):
+        print(
+            f"Not all chords are strictly contained in key {key}: "
+            f"{[chord for chord in chords if not key.contains_chord(chord)]}"
+        )
+        print(f"The chords in the key are {list(key.all_chords())}")
