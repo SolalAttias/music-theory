@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "music-theory"
+name = "music_theory"
 version = "0.1.0"
 description = ""
 authors = ["Solal Attias <solalattias@gmail.com>"]

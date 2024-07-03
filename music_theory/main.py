@@ -2,20 +2,7 @@ from enum import Enum
 from typing import Generator
 
 ROMAN_NUMERALS = ["i", "ii", "iii", "iv", "v", "vi", "vii"]
-NOTES = [
-    "C",
-    "D♭",
-    "D",
-    "E♭",
-    "E",
-    "F",
-    "G♭",
-    "G",
-    "A♭",
-    "A",
-    "B♭",
-    "B",
-]
+NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 NB_NOTES = len(NOTES)
 
 
@@ -185,6 +172,9 @@ class Key:
                 ]
             )
 
+    def __repr__(self) -> str:
+        return self.key_notation
+
 
 def find_keys(chords: list[Chord]) -> list[Key]:
     keys = []
@@ -199,30 +189,33 @@ def find_keys(chords: list[Chord]) -> list[Key]:
 
 
 if __name__ == "__main__":
-    # No Woman No Cry
-    nwnc_chords = [Chord.from_chord_notation(notation) for notation in ("C", "G", "Am", "F")]
-    print(
-        "Analysing No Woman No Cry, which has chords: "
-        f"{[chord.to_notation() for chord in nwnc_chords]}"
-    )
-    keys = find_keys(nwnc_chords)
-    print(f"These are the possible keys {[key.key_notation for key in keys]}")
-    key = keys[0]
-    print(f"Selected the key {key.key_notation}")
-    for chord in nwnc_chords:
-        print(f"{chord.to_notation()}: {key.get_numeral_from_chord(chord)}")
-
-    # Creep
-    creep_chords = [Chord.from_chord_notation(notation) for notation in ("G", "B", "C", "Cm")]
-    print("Analysing Creep, which has chords: " f"{[chord.to_notation() for chord in nwnc_chords]}")
-    key = Key("G")
-    print(f"And is in key: {key.key_notation}")
-    for chord in creep_chords:
-        print(f"{chord.to_notation()}: {key.get_numeral_from_chord(chord)}")
-
-    for chord in creep_chords:
-        if key.contains_chord(chord):
-            print(f"{chord.to_notation()} is in {key.key_notation} key")
+    is_not_empty = True
+    print("First write the chords of the song you with to analyse.")
+    print("Please type one chord per line (don't use flats! just sharps!)")
+    print("When done, just press Enter.")
+    chords = []
+    while True:
+        chord_input = input()
+        if chord_input == "":
+            break
         else:
-            print(f"{chord.to_notation()} is not strictly speaking in {key.key_notation} key")
+            chords.append(Chord.from_chord_notation(chord_input))
+    key_input = input("Type the key of your song. If you don't know just press Enter: ")
 
+    if key_input == "":
+        keys = find_keys(chords)
+
+        if keys == []:
+            print("There are no keys completely consistent with the chords you put in.")
+            exit()
+
+        print(f"These are the possible keys {[key for key in keys]}")
+        key_input = input("Which one do you want to use? ")
+        if key_input == "":
+            key_input = str(keys[0])
+            print(f"As you did not input a key, using the first one, {key_input}")
+    key = Key(key_input)
+
+    print(f"Here is the roman numeral analysis of your song in the key of {key}")
+    for chord in chords:
+        print(f"{chord.to_notation()}: {key.get_numeral_from_chord(chord)}")
